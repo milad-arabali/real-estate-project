@@ -127,9 +127,11 @@
 body {
     font-family: "YekanBakh", Arial, sans-serif;
     overflow-x: hidden;
-    max-width: 1200px;
-    margin: auto;
-    padding: 0 10px;
+    margin: 0;
+    padding: 0;
+    /*max-width: 1200px;*/
+    /*margin: auto;*/
+    /*padding: 0 10px;*/
 }
 
 a {

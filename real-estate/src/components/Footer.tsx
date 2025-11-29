@@ -33,9 +33,11 @@ const Footer: FC = () => {
     ];
 
     return (
-        <footer className="bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-md !p-4 !mb-1">
+        <footer className="bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300
+         rounded-md !p-4 !mb-1 !w-full !max-w-[1200px] !mx-auto">
             <div
-                className="container mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6">
+                className="container mx-auto flex flex-col md:flex-row items-start md:items-center
+                justify-between gap-6 p-6">
 
                 <nav className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6">
                     {menuItems.map((item, index) => (

@@ -3,6 +3,8 @@ import React from "react";
 import {Metadata} from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AuthModalProvider from "@/context/ AuthModalContext";
+
 
 export const metadata: Metadata = {
     title: "خرید و فروش املاک | سایت آگهی املاک",
@@ -53,13 +55,14 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: { children: React.ReactNode }) {
     return (
         <html lang="fa">
-
         <body className="min-h-screen flex flex-col">
-        <Header/>
-        <main className="flex-1">
-            {children}
-        </main>
-        <Footer/>
+        <AuthModalProvider>
+
+            <Header/>
+            <main className="flex-1 overflow-auto !w-full !max-w-[1200px] !mx-auto">{children}</main>
+            <Footer/>
+
+        </AuthModalProvider>
         </body>
         </html>
     );

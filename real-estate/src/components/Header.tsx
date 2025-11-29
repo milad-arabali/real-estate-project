@@ -5,16 +5,20 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {InputGroup, InputGroupAddon, InputGroupInput} from "@/components/ui/input-group";
 import {Search} from "lucide-react";
+import {useAuthModal} from "@/context/ AuthModalContext";
+
+
 
 const Header = () => {
     const [search, setSearch] = useState("");
-
+    const { openModal } = useAuthModal();
     const handleSearch = () => {
         console.log("Search:", search);
     };
 
     return (
-        <header className="bg-blue-600 dark:bg-blue-500 rounded-md !mt-1">
+
+        <header className="bg-blue-600 dark:bg-blue-500 rounded-md !mt-1 !w-full !max-w-[1200px] !mx-auto">
             <div className="container mx-auto flex flex-wrap items-center justify-between !p-2 gap-4 ">
 
                 <nav className="flex items-center gap-6 flex-shrink-0" aria-label="Main navigation">
@@ -51,14 +55,15 @@ const Header = () => {
                 </section>
 
                 <div className="flex items-center gap-4 flex-shrink-0">
-                    <Button className="bg-white text-blue-700 hover:bg-blue-100 !p-4">
+                    <Button
+                        onClick={openModal}
+                        className="bg-white text-blue-700 hover:bg-blue-100 !p-4">
                         ورود
                     </Button>
                 </div>
 
             </div>
         </header>
-
 
     );
 };
