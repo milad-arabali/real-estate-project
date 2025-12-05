@@ -14,6 +14,7 @@ interface Props {
 export default function AuthModal({open, onOpenChange}: Props) {
     const formRef = useRef<HTMLFormElement>(null);
     return (
+
         <Dialog open={open} onOpenChange={onOpenChange}>
 
             <DialogOverlay className="fixed inset-0 bg-white/35 backdrop-blur-[2px] z-[9998]"/>

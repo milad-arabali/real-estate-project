@@ -58,9 +58,14 @@ export default function RootLayout({children}: { children: React.ReactNode }) {
         <body className="min-h-screen flex flex-col">
         <AuthModalProvider>
 
-            <Header/>
-            <main className="flex-1 overflow-auto !w-full !max-w-[1200px] !mx-auto">{children}</main>
-            <Footer/>
+            <div className="!w-full !max-w-[1200px] !mx-auto px-4 flex flex-col flex-1">
+
+                <Header/>
+                <main className="flex-1 overflow-auto">
+                    {children}
+                </main>
+                <Footer/>
+            </div>
 
         </AuthModalProvider>
         </body>
