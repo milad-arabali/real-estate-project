@@ -5,6 +5,7 @@ import useSWRMutation from "swr/mutation";
 import {signIn} from "next-auth/react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
+import bcrypt from "bcryptjs"; // ⭐ برای هش سمت کلاینت
 
 interface AuthPageProps {
     formRef: RefObject<HTMLFormElement | null>;
@@ -15,7 +16,7 @@ interface AuthPageProps {
 
 interface FormState {
     success: boolean;
-    values: { name?: string; email: string; password: string; confirmPassword?: string };
+    values: { email: string; password: string; confirmPassword?: string };
     message: string;
 }
 
@@ -32,7 +33,6 @@ async function authRequest(_: string, {arg}: { arg: any }) {
         const res = await fetch("/api/auth/signup", {
             method: "POST",
             body: JSON.stringify({
-                name: arg.name,
                 email: arg.email,
                 password: arg.password,
             }),
@@ -42,7 +42,12 @@ async function authRequest(_: string, {arg}: { arg: any }) {
     }
 }
 
-export default function AuthPage({formRef, onClose, initialMode = "login", onModeChange}: AuthPageProps) {
+export default function AuthPage({
+                                     formRef,
+                                     onClose,
+                                     initialMode = "login",
+                                     onModeChange,
+                                 }: AuthPageProps) {
     const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [mode, setMode] = useState<"login" | "register">(initialMode);
@@ -51,7 +56,7 @@ export default function AuthPage({formRef, onClose, initialMode = "login", onMod
 
     const initialState: FormState = {
         success: false,
-        values: {name: "", email: "", password: "", confirmPassword: ""},
+        values: {email: "", password: "", confirmPassword: ""},
         message: "",
     };
 
@@ -60,37 +65,89 @@ export default function AuthPage({formRef, onClose, initialMode = "login", onMod
         const password = formData.get("password") as string;
 
         if (!email || !password) {
-            return {...prevState, success: false, message: "⚠️ لطفا تمام فیلدها را پر کنید!"};
+            return {
+                ...prevState,
+                success: false,
+                message: "⚠️ لطفا تمام فیلدها را پر کنید!",
+            };
         }
 
+        // ---------------------------
+        // ⭐ REGISTER MODE
+        // ---------------------------
         if (mode === "register") {
-            const name = formData.get("name") as string;
             const confirmPassword = formData.get("confirmPassword") as string;
 
-            if (!name) return {...prevState, success: false, message: "⚠️ نام الزامی است!"};
-            if (password !== confirmPassword) return {...prevState, success: false, message: "❌ پسوردها یکسان نیستند!"};
+            if (password !== confirmPassword) {
+                return {
+                    ...prevState,
+                    success: false,
+                    message: "❌ پسوردها یکسان نیستند!",
+                };
+            }
 
+            const hashedPassword = await bcrypt.hash(password, 10);
             try {
-                const res = await mutation.trigger({mode: "register", name, email, password});
-                if (res?.error) return {success: false, values: {email, password}, message: "❌ ثبت‌نام انجام نشد!"};
+                const res = await mutation.trigger({
+                    mode: "register",
+                    email,
+                    password: hashedPassword,
+                });
+
+                if (res?.error) {
+                    return {
+                        success: false,
+                        values: {email, password, confirmPassword},
+                        message: res.error || "❌ ثبت‌نام انجام نشد!",
+                    };
+                }
+
                 return {
                     success: true,
-                    values: {name: "", email: "", password: "", confirmPassword: ""},
-                    message: "✅ ثبت‌نام با موفقیت انجام شد!"
+                    values: {email: "", password: "", confirmPassword: ""},
+                    message: "✅ ثبت‌نام با موفقیت انجام شد!",
                 };
-            } catch (_) {
-                return {...prevState, success: false, message: "❌ خطایی رخ داد!"};
+            } catch (e) {
+                return {
+                    ...prevState,
+                    success: false,
+                    message: "❌ خطایی رخ داد!",
+                };
             }
         }
 
+        // ---------------------------
+        // ⭐ LOGIN MODE
+        // ---------------------------
         try {
-            const res = await mutation.trigger({mode: "login", email, password});
-            if (res?.error) return {success: false, values: {email, password}, message: "❌ ایمیل یا پسورد اشتباه است!"};
+            const res = await mutation.trigger({
+                mode: "login",
+                email,
+                password,
+            });
+
+            if (res?.error) {
+                return {
+                    success: false,
+                    values: {email, password},
+                    message: "❌ ایمیل یا پسورد اشتباه است!",
+                };
+            }
+
             onClose();
             startTransition(() => router.push("/todo"));
-            return {success: true, values: {email: "", password: ""}, message: "✅ ورود موفقیت آمیز بود!"};
-        } catch (_) {
-            return {...prevState, success: false, message: "❌ خطایی رخ داد!"};
+
+            return {
+                success: true,
+                values: {email: "", password: ""},
+                message: "✅ ورود موفقیت‌آمیز بود!",
+            };
+        } catch {
+            return {
+                ...prevState,
+                success: false,
+                message: "❌ خطایی رخ داد!",
+            };
         }
     }
 
@@ -121,11 +178,12 @@ export default function AuthPage({formRef, onClose, initialMode = "login", onMod
                         defaultValue={state.values.email}
                         required
                         className="h-12 text-lg placeholder-gray-400 bg-blue-50
-                                   placeholder-opacity-70 placeholder:text-[11px] placeholder: !pr-1
+                                   placeholder-opacity-70 placeholder:text-[11px] placeholder:!pr-1
                                    border border-gray-300 rounded-lg px-4
                                    focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
                                    transition"
                     />
+
                     <Input
                         type="password"
                         name="password"
@@ -133,11 +191,12 @@ export default function AuthPage({formRef, onClose, initialMode = "login", onMod
                         defaultValue={state.values.password}
                         required
                         className="h-12 text-lg placeholder-gray-400 bg-blue-50 !mt-5
-                                   placeholder-opacity-70 placeholder:text-[11px] placeholder: !pr-1
+                                   placeholder-opacity-70 placeholder:text-[11px] placeholder:!pr-1
                                    border border-gray-300 rounded-lg px-4
                                    focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
                                    transition"
                     />
+
                     {mode === "register" && (
                         <Input
                             type="password"
@@ -145,11 +204,11 @@ export default function AuthPage({formRef, onClose, initialMode = "login", onMod
                             placeholder=" تکرار پسورد"
                             defaultValue={state.values.confirmPassword}
                             required
-                            className="h-12 text-lg placeholder-gray-400 bg-blue-50
-                            placeholder-opacity-70 placeholder:text-[11px] placeholder: !pr-1
-                            border border-gray-300 rounded-lg px-4 !mt-5
-                            focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
-                            transition"
+                            className="h-12 text-lg placeholder-gray-400 bg-blue-50 !mt-5
+                                       placeholder-opacity-70 placeholder:text-[11px] placeholder:!pr-1
+                                       border border-gray-300 rounded-lg px-4
+                                       focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
+                                       transition"
                         />
                     )}
                 </form>
@@ -178,7 +237,11 @@ export default function AuthPage({formRef, onClose, initialMode = "login", onMod
                 </button>
 
                 {state.message && (
-                    <p className={`text-center text-sm ${state.success ? "text-green-600" : "text-red-600"}`}>
+                    <p
+                        className={`text-center text-sm ${
+                            state.success ? "text-green-600" : "text-red-600"
+                        }`}
+                    >
                         {state.message}
                     </p>
                 )}
