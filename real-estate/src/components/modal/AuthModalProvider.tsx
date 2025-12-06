@@ -1,22 +1,22 @@
 "use client";
 
-import React, {useRef} from "react";
+import React, {useRef, useState} from "react";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogOverlay, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import AuthPage from "@/components/AuthPage";
 
-
 interface Props {
     open: boolean;
     onOpenChange: (v: boolean) => void;
+    defaultMode?: "login" | "register";
 }
 
-export default function AuthModal({open, onOpenChange}: Props) {
+export default function AuthModal({open, onOpenChange, defaultMode = "login"}: Props) {
     const formRef = useRef<HTMLFormElement>(null);
+    const [mode, setMode] = useState<"login" | "register">(defaultMode);
+
     return (
-
         <Dialog open={open} onOpenChange={onOpenChange}>
-
             <DialogOverlay className="fixed inset-0 bg-white/35 backdrop-blur-[2px] z-[9998]"/>
 
             <DialogContent
@@ -26,17 +26,20 @@ export default function AuthModal({open, onOpenChange}: Props) {
                            flex flex-col rounded-sm
                            bg-white shadow-[0_6px_30px_rgba(0,0,0,0.15)] z-[9999]"
             >
-
                 <DialogHeader
                     className="flex flex-col items-start justify-center h-15 !p-5 !border-b !border-[#dbdbe4]">
-                    <DialogTitle className="text-xl  font-bold text-gray-900">
-                        ورود به حساب کاربری
+                    <DialogTitle className="text-xl font-bold text-gray-900">
+                        {mode === "login" ? "ورود به حساب کاربری" : "ایجاد حساب کاربری"}
                     </DialogTitle>
                 </DialogHeader>
 
-
                 <div className="flex-1 overflow-y-auto px-8 py-6 space-y-4">
-                    <AuthPage formRef={formRef} onClose={() => onOpenChange(false)}/>
+                    <AuthPage
+                        formRef={formRef}
+                        onClose={() => onOpenChange(false)}
+                        initialMode={mode}
+                        onModeChange={(m) => setMode(m)}
+                    />
                 </div>
 
                 <DialogFooter className="flex justify-end gap-3 p-10 !border-t !border-[#dbdbe4]">
@@ -48,7 +51,6 @@ export default function AuthModal({open, onOpenChange}: Props) {
                         تایید
                     </Button>
                 </DialogFooter>
-
             </DialogContent>
         </Dialog>
     );

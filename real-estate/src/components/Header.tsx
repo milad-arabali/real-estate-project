@@ -58,7 +58,7 @@ const Header = () => {
                     <Button
                         onClick={openModal}
                         className="bg-white text-blue-700 hover:bg-blue-100 !p-4">
-                        ورود
+                       ورود / ثبت نام
                     </Button>
                 </div>
 
