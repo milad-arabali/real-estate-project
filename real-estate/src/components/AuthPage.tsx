@@ -162,6 +162,7 @@ export default function AuthPage({
 
     const toggleMode = () => {
         const newMode = mode === "login" ? "register" : "login";
+        formRef.current?.reset()
         setMode(newMode);
         onModeChange?.(newMode);
     };
@@ -178,7 +179,8 @@ export default function AuthPage({
                         defaultValue={state.values.email}
                         required
                         className="h-12 text-lg placeholder-gray-400 bg-blue-50
-                                   placeholder-opacity-70 placeholder:text-[11px] placeholder:!pr-1
+
+                                   placeholder-opacity-70 placeholder:text-[13px] placeholder:!pr-1
                                    border border-gray-300 rounded-lg px-4
                                    focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
                                    transition"
@@ -191,7 +193,7 @@ export default function AuthPage({
                         defaultValue={state.values.password}
                         required
                         className="h-12 text-lg placeholder-gray-400 bg-blue-50 !mt-5
-                                   placeholder-opacity-70 placeholder:text-[11px] placeholder:!pr-1
+                                   placeholder-opacity-70 placeholder:text-[13px] placeholder:!pr-1
                                    border border-gray-300 rounded-lg px-4
                                    focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
                                    transition"
@@ -205,7 +207,8 @@ export default function AuthPage({
                             defaultValue={state.values.confirmPassword}
                             required
                             className="h-12 text-lg placeholder-gray-400 bg-blue-50 !mt-5
-                                       placeholder-opacity-70 placeholder:text-[11px] placeholder:!pr-1
+
+                                       placeholder-opacity-70 placeholder:text-[13px] placeholder:!pr-1
                                        border border-gray-300 rounded-lg px-4
                                        focus:outline-none focus:ring-0 focus:border-2 focus:border-blue-500
                                        transition"
