@@ -5,7 +5,7 @@ import useSWRMutation from "swr/mutation";
 import {signIn} from "next-auth/react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
-import bcrypt from "bcryptjs"; // ⭐ برای هش سمت کلاینت
+import bcrypt from "bcryptjs";
 
 interface AuthPageProps {
     formRef: RefObject<HTMLFormElement | null>;
@@ -135,7 +135,6 @@ export default function AuthPage({
             }
 
             onClose();
-            startTransition(() => router.push("/todo"));
 
             return {
                 success: true,
@@ -155,7 +154,7 @@ export default function AuthPage({
 
     const handleGoogleSignIn = () => {
         startTransition(() => {
-            signIn("google", {callbackUrl: "/todo"});
+            signIn("google");
             onClose();
         });
     };
