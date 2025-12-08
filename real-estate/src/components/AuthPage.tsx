@@ -48,7 +48,6 @@ export default function AuthPage({
                                      initialMode = "login",
                                      onModeChange,
                                  }: AuthPageProps) {
-    const router = useRouter();
     const [isPending, startTransition] = useTransition();
     const [mode, setMode] = useState<"login" | "register">(initialMode);
 
