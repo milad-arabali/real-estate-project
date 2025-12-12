@@ -5,6 +5,7 @@ const usersSchema = new Schema({
     password: {type: String, default: ""},
     name: {type: String, default: ""},
     family: {type: String, default: ""},
+    address: {type: String, default: ""},
     createdAt: {type: Date, default: Date.now, immutable: true},
 });
 

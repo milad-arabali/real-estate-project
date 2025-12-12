@@ -54,6 +54,7 @@ export const authOptions: NextAuthOptions = {
                             name: user.name || "",
                             password: "",
                             family: "",
+                            address: "",
                         });
 
                         user.id = newUser._id.toString();
