@@ -2,8 +2,18 @@ import React from "react";
 import "../globals.css";
 import {Heart, Home, LogOut, ShoppingBag, User} from "lucide-react";
 import Link from "next/link";
+import {getServerSession} from "next-auth";
+import {authOptions} from "@/app/api/auth/[...nextauth]/route";
+import {redirect} from "next/navigation";
+import {signOut} from "next-auth/react";
+import LogoutButton from "@/components/button/LogoutButton";
 
-export default function DashboardLayout({children}: { children: React.ReactNode }) {
+export default async function DashboardLayout({children}: { children: React.ReactNode }) {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        redirect("/");
+    }
     return (
         <section
             dir="rtl"
@@ -56,10 +66,7 @@ export default function DashboardLayout({children}: { children: React.ReactNode 
                     </nav>
 
                     <nav className="!px-2 !mt-auto !mb-3">
-                        <button className="flex items-center gap-4 !m-1 !p-2 w-full rounded-2xl bg-red-50 text-red-600">
-                            <LogOut size={20}/>
-                            <span className="font-medium">خروج</span>
-                        </button>
+                        <LogoutButton />
                     </nav>
 
                 </aside>
