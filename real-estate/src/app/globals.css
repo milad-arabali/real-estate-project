@@ -144,6 +144,9 @@ body {
     opacity: 1;
 }
 
+.group\/native-select.relative.w-fit.has-\[select\:disabled\]\:opacity-50 { width: 100%; }
+
+
 
 a {
     color: inherit;
