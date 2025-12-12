@@ -20,7 +20,7 @@ export default function AuthButtons({session}: any) {
             ) : (
                 <>
                     <Link
-                        href="/dashboard"
+                        href="/my-account/dashboard"
                         className="flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-100 !p-2 rounded-md"
                     >
                         <LayoutDashboard className="w-5 h-5"/>
